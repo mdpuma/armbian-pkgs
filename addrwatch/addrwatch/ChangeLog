@@ -1,0 +1,2 @@
+Check with:
+$ git log --date=short

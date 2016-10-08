@@ -1,0 +1,85 @@
+#!/bin/bash
+#
+# chkconfig: 2345 15 80
+# description: addrwatch
+#
+### BEGIN INIT INFO
+# Provides:          addrwatch
+# Required-Start:    $network
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: A tool similar to arpwatch for IPv4/IPv6 and ethernet address pairing monitoring. 
+# Description:       A tool similar to arpwatch for IPv4/IPv6 and ethernet address pairing monitoring. 
+### END INIT INFO
+#
+
+[ ! -f /usr/bin/addrwatch ] && exit 1
+[ ! -f /etc/default/addrwatch ] && exit 1
+
+# Source function library.
+if [ -f /etc/init.d/functions ]; then
+	. /etc/init.d/functions
+fi
+
+. /etc/default/addrwatch
+
+DAEMON=/usr/bin/addrwatch
+PIDFILE=/var/run/addrwatch.pid
+
+case "$1" in
+  start)
+	echo -n "Starting addrwatch:"
+	$DAEMON --daemon --output $STATEFILE --pid $PIDFILE --ratelimit $RATELIMIT $OPTS $INTERFACES
+	if [ -f /etc/debian_version ] || [ -f /etc/lsb-release ] || [ -f /etc/gentoo-release ]; then
+		echo " Done"
+	else
+		success
+		echo
+	fi
+	;;
+  stop)
+	echo -n "Stopping addrwatch:"
+	if [ -f $PIDFILE ] && [ -n "`cat $PIDFILE`" ]; then
+		kill -TERM `cat $PIDFILE` 2>/dev/null
+		[ $? -ne 0 ] && kill -TERM `pidof addrwatch` 2>/dev/null
+	fi
+	rm $PIDFILE 2>/dev/null
+	if [ -f /etc/debian_version ] || [ -f /etc/lsb-release ] || [ -f /etc/gentoo-release ]; then
+		echo " Done"
+	else
+		success
+		echo
+	fi
+	;;
+  status)
+	echo -n "Status of addrwatch:"
+	PID="`pidof addrwatch`"
+	if [ -n "$PID" ]; then
+		echo " is running ($PID)"
+	else
+		echo " is not running"
+	fi
+        ;;
+  reload)
+	echo -n "Reloading addrwatch:"
+	if [ -f $PIDFILE ] && [ -n "`cat $PIDFILE`" ]; then
+		kill -HUP `cat $PIDFILE`
+	fi
+	if [ -f /etc/debian_version ] || [ -f /etc/lsb-release ] || [ -f /etc/gentoo-release ]; then
+		echo " Done"
+	else
+		success
+		echo
+	fi
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  *)
+	echo "Usage: $0 start|stop|restart|reload|status"
+	exit 1
+esac
+
+exit 0

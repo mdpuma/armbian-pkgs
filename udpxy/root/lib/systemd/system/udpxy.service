@@ -1,0 +1,11 @@
+[Unit]
+Description=udpxy
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/udpxy -a lo -p 4022 -m eth0.21
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

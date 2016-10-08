@@ -1,0 +1,12 @@
+# /etc/default/addrwatch
+
+INTERFACES="eth0"
+
+# If NUM is set to 0, ratelimiting is disabled and all pairing discovery events are reported.
+# If NUM is set to -1, ratelimiting is enabled with infinitely long time window therefore all duplicate pairings are suppressed indefinitely. In this mode addrwatch acts almost as arpwatch with the exception that ethernet address changes are still reported.
+# It might look tempting to always use addrwatch with --ratelimit=-1 however by doing so you loose the information about when and for what period of time specific IP address was used. There will be no difference between temporary IPv6 addressed which was used once and statically configured permanent addresses.
+RATELIMIT="60"
+
+STATEFILE="/tmp/addrwatch.state"
+
+OPTS="--syslog"
