@@ -1,0 +1,12 @@
+[Unit]
+Description=igmpproxy
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/igmpproxy /etc/igmpproxy.conf
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
